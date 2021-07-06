@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css?family=Open+San');
+
+body {
+}
+
+.cardContainer {
+	height: 320px;
+	width: 480px;
+	margin: 10px;
+	font-family: 'Open Sans', sans-serif;
+}
+
+
+.card {
+	height: 100%;
+	display: flex;
+	width: 100%;
+}
+
+.bio {
+	width: 180px;
+	height: 100%;
+	background-color: 	#DCDCDC;
+	border-radius: 25px;
+}
+
+.bioContent {
+	margin: 20px;
+	height: 280px;
+	color: 		#505050;
+}
+
+.photo {
+	width: 140px;
+	height: 140px;
+}
+
+.photoHolder {
+	background-image: url('photo.jpg');
+	background-size: cover;
+	background-position: center center;
+	width: 100%;
+	height: 100%;
+	box-shadow: 0 6px 12px -3px rgba(0,0,0,.3);
+	border-radius: 25px;
+}
+
+.facts {
+	margin-top: 20px;
+}
+
+.name {
+	text-align: center;
+	font-weight: 600;
+	font-size: 1.4rem;
+}
+
+.factList {
+	margin-top: 10px;
+	font-size: 0.9rem;
+	font-family: sans-serif;
+	display: flex;
+	/*flex-direction: row;*/
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+
+.factListBullet {
+	display: inline-block;
+	background: #696969;
+  	color: white;
+  	font-family: 'Helvetica', 'Arial', sans-serif;
+  	font-size: 12px;
+  	font-weight: bold;
+  	text-align: center;
+  	width: 14px;
+  	height: 14px;
+  	border-radius: 2px;
+}
+
+.factListBulletInner{
+}
+
+.factListText {
+	margin-left: 5px;
+	display: inline-block;
+	flex-grow: 2;
+	width: 120px;
+}
+
+.university{
+}
+
+.details {
+	width: 300px;
+	height: 100%;
+	background-color: white;
+}
+
+.slides {
+	margin: 20px;
+	height: 280px;
+	color: #44566C;
+}
+
+.slide {
+	display: none;
+	width: 100%;
+	height: 100%;
+}
+
+.slides .title{
+	font-size: 1.4rem;
+	height: 30px;
+}
+
+.slides .divider {
+	margin-top: 10px;
+	height: 5px;
+	background-color: blue;
+	width: 100px;
+	border-radius: 2px;
+}
+
+.divider .dividerFirst {
+	height: 100%;
+	width: 30px;
+	background-color: orange;
+	border-radius: 2px;
+}
+
+.slidesList {
+	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 235px;
+}
+
+.slideListItem {
+	padding: 5px;
+	/*margin-top: 10px;*/
+	border-width: thin;
+	border-style: solid;
+	border-color: rgb(204, 204, 204);
+	border-radius: 5px;
+
+}
