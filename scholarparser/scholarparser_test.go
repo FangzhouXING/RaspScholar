@@ -17,5 +17,6 @@ func TestParseScholarParsing(t *testing.T) {
 	if err != nil {
 		t.Error("Parse failed.")
 	}
+
 	fmt.Println(scholar)
 }
