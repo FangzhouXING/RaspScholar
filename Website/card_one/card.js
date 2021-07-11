@@ -12,7 +12,7 @@ updateFromServer();
 function updateFromServer() {
 	updateBio(fetchBioFromServer());
 	updateRecentPublications(fectchRecentPublications());
-	updateMostCitedPapers(fectchRecentPublications());
+	updateMostCitedPapers(fetchMostCitedPublications());
 
 	// 60 seconds
 	setTimeout(updateFromServer, 60000); 
