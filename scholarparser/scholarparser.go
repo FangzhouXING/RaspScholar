@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -150,18 +151,24 @@ func GetScholar(config ScholarParserConfig) (Scholar, error) {
 	fmt.Println("reqstr:", reqUrl)
 
 	req, e := http.NewRequest("GET", reqUrl, nil)
-	if e != nil {
+	for e != nil {
 		panic(e)
 	}
 
 	//setHeader(req)
 	fmt.Println("Created Request.")
 
-	res, e := new(http.Client).Do(req)
-	if e != nil {
-		panic(e)
+	var res *http.Response
+	for {
+		res, e = new(http.Client).Do(req)
+		if e != nil {
+			fmt.Printf("Error getting scholar page:\n\t %s.\nRetry after 60s.\n", reqUrl)
+			time.Sleep(60 * time.Second)
+		} else {
+			defer res.Body.Close()
+			break
+		}
 	}
-	defer res.Body.Close()
 
 	scholar, err := ParseScholarPage(res.Body)
 	if err != nil {
