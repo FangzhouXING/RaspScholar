@@ -11,8 +11,8 @@ updateFromServer();
 
 function updateFromServer() {
 	updateBio(fetchBioFromServer());
-	// updateMostCitedPapers(fectchRecentPublications());
 	updateRecentPublications(fectchRecentPublications());
+	updateMostCitedPapers(fectchRecentPublications());
 
 	// 60 seconds
 	setTimeout(updateFromServer, 60000); 
@@ -59,11 +59,23 @@ function updateBio(basicInfoPromise) {
 
 
 function fetchMostCitedPublications() {
-
+	return fetchHelper("/mostcited/");
 }
 
-function updateMostCitedPapers() {
-
+function updateMostCitedPapers(papersPromise) {
+	papersPromise.then(
+		papers => {
+			let publicationsList = document.querySelectorAll("#mostCitedPapers .slideListItem");
+			let i = 0;
+			for (i = 0; i < publicationsList.length; i++) {
+				let title = "";
+				if (i < papers["Papers"].length) {
+					title = papers["Papers"][i]["Title"];
+				}
+				publicationsList[i].innerText = title;
+			}
+		}
+		);
 }
 
 function fectchRecentPublications() {
