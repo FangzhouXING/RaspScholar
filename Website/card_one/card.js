@@ -6,7 +6,7 @@ const hIndex = document.getElementById("hIndex");
 
 let slideIndex = 0;
 
-carousel()
+showSlides();
 updateFromServer();
 
 function updateFromServer() {
@@ -51,6 +51,7 @@ function updateBio(basicInfoPromise) {
 			// update focus area
 			area.innerText = basicInfo["Focus"].join(", ");
 			// update h-index
+			hIndex.innerText = basicInfo["HIndex"];
 			// TODO
 		});
 	
@@ -91,19 +92,20 @@ function updateRecentPublications(papersPromise) {
 	
 }
 
-function carousel() {
-	let i;
-	let slides = document.getElementsByClassName("slide");
-	for (i = 0; i < slides.length; i++) {
-		slides[i].style.display = "none"; 
-	}
-	slideIndex++;
-	if (slideIndex > slides.length) {
-		slideIndex = 1;
-	} 
-	slides[slideIndex-1].style.display = "block";
-	slides[slideIndex-1].classList.add("fadeIn");
-	// 10 seconds
-	setTimeout(carousel, 10000); 
+function showSlides() {
+  let i;
+  let slides = document.getElementsByClassName("slide");
+  let dots = document.getElementsByClassName("dot");
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";  
+  }
+  slideIndex++;
+  if (slideIndex > slides.length) {slideIndex = 1}    
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";  
+  dots[slideIndex-1].className += " active";
+  setTimeout(showSlides, 10000); // Change image every 10 seconds
 }
 
