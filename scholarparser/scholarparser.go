@@ -25,6 +25,7 @@ type Scholar struct {
 	Name          string
 	RankAndSchool string
 	Focus         []string
+	HIndex        int
 	Papers        []Paper
 }
 
@@ -53,6 +54,18 @@ func parseYear(text string) int {
 		panic(errstr)
 	}
 	return year
+}
+
+func parseHIndexInt(text string) int {
+	if text == "" {
+		return 0
+	}
+	hindex, err := strconv.Atoi(text)
+	if err != nil {
+		errstr := fmt.Sprintf("Unable to parse hindex %v to int", text)
+		panic(errstr)
+	}
+	return hindex
 }
 
 func ParseScholarPage(page io.Reader) (Scholar, error) {
@@ -98,7 +111,20 @@ func ParseScholarPage(page io.Reader) (Scholar, error) {
 
 	doc.Find("#gsc_prf").Each(parseScholar)
 
-	scholar := Scholar{Name: name, RankAndSchool: rankAndSchool, Focus: focus, Papers: papers}
+	var hindex int = 0
+	parseHIndex := func(i int, s *goquery.Selection) {
+		rowText := s.First().Text()
+		fmt.Printf("rowText: %s\n", rowText)
+		if rowText == "h-index" {
+			numberPart := s.First().Next().Text()
+			fmt.Printf("numberPart: %s\n", numberPart)
+			hindex = parseHIndexInt(numberPart)
+		}
+
+	}
+	doc.Find(".gsc_rsb_sc1").Each(parseHIndex)
+
+	scholar := Scholar{Name: name, RankAndSchool: rankAndSchool, Focus: focus, Papers: papers, HIndex: hindex}
 	//os.WriteFile("samplepage2.html")
 	return scholar, nil
 }

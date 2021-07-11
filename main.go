@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"sort"
 	"sync"
 	"time"
 
@@ -98,6 +99,7 @@ func ReadDefaultConfig() (ParserConfig, error) {
 type BasicInfoResponse struct {
 	Name          string
 	RankAndSchool string
+	HIndex        int
 	Focus         []string
 }
 
@@ -105,12 +107,24 @@ type RecentPaperResponse struct {
 	Papers []sp.Paper
 }
 
+type MostCitedResponse struct {
+	Papers []sp.Paper
+}
+
 func getBasicInfo(scholar sp.Scholar) BasicInfoResponse {
-	return BasicInfoResponse{Name: scholar.Name, RankAndSchool: scholar.RankAndSchool, Focus: scholar.Focus}
+	return BasicInfoResponse{Name: scholar.Name, RankAndSchool: scholar.RankAndSchool, HIndex: scholar.HIndex, Focus: scholar.Focus}
 }
 
 func getRecentPaper(scholar sp.Scholar) RecentPaperResponse {
 	return RecentPaperResponse{Papers: scholar.Papers}
+}
+
+func getMostCited(scholar sp.Scholar) MostCitedResponse {
+	papers := scholar.Papers
+	sort.Slice(papers, func(i, j int) bool {
+		return papers[i].Citation > papers[j].Citation
+	})
+	return MostCitedResponse{Papers: papers}
 }
 
 func handleScholarBasicInfo(w http.ResponseWriter, r *http.Request) {
@@ -137,6 +151,21 @@ func handleRecentPapers(w http.ResponseWriter, r *http.Request) {
 
 		latestScholar := gScholarVersiion.LatestVersion()
 		bytes, _ := json.Marshal(getRecentPaper(latestScholar))
+		w.Write(bytes)
+	default:
+		fmt.Printf("Unexpected method: %v.\n", r.Method)
+	}
+}
+
+func handleMostCited(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("In MostCited.", r.URL)
+	switch r.Method {
+	case "GET":
+		fmt.Printf("GET URL: %v\n", r.URL)
+		w.Header().Set("Content-Type", "application/json")
+
+		latestScholar := gScholarVersiion.LatestVersion()
+		bytes, _ := json.Marshal(getMostCited(latestScholar))
 		w.Write(bytes)
 	default:
 		fmt.Printf("Unexpected method: %v.\n", r.Method)
@@ -175,6 +204,7 @@ func fetchScholar(config ParserConfig) sp.Scholar {
 func ScholarUpdateRoutine(sv *ScholarVersion, config ParserConfig) {
 	sv.AddVersion(fetchScholar(config))
 
+	testjson(sv)
 	var fetchAvailable int = 0
 	var fetchMutex sync.Mutex
 	fetchCountDown := func() {
@@ -210,6 +240,15 @@ func ScholarUpdateRoutine(sv *ScholarVersion, config ParserConfig) {
 
 }
 
+func testjson(sv *ScholarVersion) {
+	latestScholar := gScholarVersiion.LatestVersion()
+	bytes1, _ := json.Marshal(getBasicInfo(latestScholar))
+	ioutil.WriteFile("basicinfo.json", bytes1, 0644)
+
+	bytes2, _ := json.Marshal(getRecentPaper(latestScholar))
+	ioutil.WriteFile("papers.json", bytes2, 0644)
+}
+
 func main() {
 
 	rand.Seed(time.Now().UnixNano())
@@ -225,6 +264,7 @@ func main() {
 	httpMux.Handle("/", fs)
 	httpMux.HandleFunc("/bascinfo/", handleScholarBasicInfo)
 	httpMux.HandleFunc("/recentpapers/", handleRecentPapers)
+	httpMux.HandleFunc("/mostcited/", handleMostCited)
 
 	//http.Handle("/static/", http.FileServer(http.Dir("Website/static")))
 
