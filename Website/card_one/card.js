@@ -73,6 +73,7 @@ function updateMostCitedPapers(papersPromise) {
 					title = papers["Papers"][i]["Title"];
 				}
 				publicationsList[i].innerText = title;
+				// ["Citation"];
 			}
 		}
 		);
